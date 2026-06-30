@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────
+   THEME CSS VARIABLES
+   hap-* colors use the Tailwind format: space-separated R G B
+   so opacity modifiers like bg-hap-bg/85 still work.
+───────────────────────────────────────────────────────────────── */
+:root {
+  --hap-bg:       9   9  15;
+  --hap-surface: 17  17  24;
+  --hap-surface2:24  24  31;
+  --hap-surface3:31  31  42;
+  --hap-border:  37  37  56;
+  --hap-borderl: 51  51  80;
+
+  /* Ink = text colour that flips with the theme */
+  --ink:   255 255 255;
+  --ink-60: rgba(255,255,255,0.60);
+  --ink-40: rgba(255,255,255,0.40);
+
+  color-scheme: dark;
+}
+
+:root.light {
+  --hap-bg:      248 248 252;
+  --hap-surface: 255 255 255;
+  --hap-surface2:241 241 247;
+  --hap-surface3:232 232 239;
+  --hap-border:  215 215 230;
+  --hap-borderl: 185 185 210;
+
+  --ink:   12  12  24;
+  --ink-60: rgba(12,12,24,0.60);
+  --ink-40: rgba(12,12,24,0.40);
+
+  color-scheme: light;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LIGHT MODE: text-white/* → dark ink
+   Tailwind compiles text-white/40 etc as literal rgba values, so
+   we need per-variant !important overrides.
+───────────────────────────────────────────────────────────────── */
+:root.light .text-white      { color: rgb(12 12 24)          !important; }
+:root.light .text-white\/5   { color: rgba(12,12,24,0.05)    !important; }
+:root.light .text-white\/10  { color: rgba(12,12,24,0.10)    !important; }
+:root.light .text-white\/15  { color: rgba(12,12,24,0.15)    !important; }
+:root.light .text-white\/20  { color: rgba(12,12,24,0.20)    !important; }
+:root.light .text-white\/25  { color: rgba(12,12,24,0.25)    !important; }
+:root.light .text-white\/30  { color: rgba(12,12,24,0.30)    !important; }
+:root.light .text-white\/35  { color: rgba(12,12,24,0.35)    !important; }
+:root.light .text-white\/40  { color: rgba(12,12,24,0.40)    !important; }
+:root.light .text-white\/45  { color: rgba(12,12,24,0.45)    !important; }
+:root.light .text-white\/50  { color: rgba(12,12,24,0.50)    !important; }
+:root.light .text-white\/55  { color: rgba(12,12,24,0.55)    !important; }
+:root.light .text-white\/60  { color: rgba(12,12,24,0.60)    !important; }
+:root.light .text-white\/65  { color: rgba(12,12,24,0.65)    !important; }
+:root.light .text-white\/70  { color: rgba(12,12,24,0.70)    !important; }
+:root.light .text-white\/75  { color: rgba(12,12,24,0.75)    !important; }
+:root.light .text-white\/80  { color: rgba(12,12,24,0.80)    !important; }
+:root.light .text-white\/90  { color: rgba(12,12,24,0.90)    !important; }
+
+/* Component classes that bake text-white via @apply */
+:root.light .input            { color: rgb(12 12 24) !important; background-color: rgb(var(--hap-surface2)) !important; }
+:root.light .input::placeholder { color: rgba(12,12,24,0.35)  !important; }
+:root.light .nav-item         { color: rgba(12,12,24,0.50)    !important; }
+:root.light .nav-item:hover   { color: rgb(12 12 24)          !important; }
+:root.light .nav-item.active  { color: #c9a84c                !important; }
+:root.light .tab-item         { color: rgba(12,12,24,0.40)    !important; }
+:root.light .tab-item:hover   { color: rgba(12,12,24,0.70)    !important; }
+:root.light .tab-item.active  { color: #c9a84c                !important; }
+:root.light .tbl th           { color: rgba(12,12,24,0.40)    !important; }
+:root.light .tbl td           { color: rgba(12,12,24,0.70)    !important; }
+:root.light .tbl tbody tr:hover { background-color: rgb(var(--hap-surface2)) !important; }
+
+/* text-hap-bg is used as text on gold buttons — keep dark in both modes */
+:root.light .text-hap-bg      { color: rgb(12 12 24)          !important; }
+
+/* white bg overlays → flip to dark in light mode */
+:root.light .bg-white\/5      { background-color: rgba(12,12,24,0.04)   !important; }
+:root.light .bg-white\/10     { background-color: rgba(12,12,24,0.06)   !important; }
+
+/* Hover-bg-white utility used in navbar items */
+:root.light .hover\:bg-white\/5:hover  { background-color: rgba(12,12,24,0.05) !important; }
+:root.light .hover\:bg-white\/10:hover { background-color: rgba(12,12,24,0.08) !important; }
+
+/* Scrollbar */
+:root.light ::-webkit-scrollbar-track  { background: rgb(241 241 247); }
+:root.light ::-webkit-scrollbar-thumb  { background: rgb(185 185 210); }
+
+/* ─────────────────────────────────────────────────────────────────
+   BASE LAYER
+───────────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    box-sizing: border-box;
+    /* Smooth colour transitions when theme changes */
+    transition-property: background-color, border-color, color;
+    transition-duration: 250ms;
+    transition-timing-function: ease;
+  }
+  /* But don't transition layout-affecting props */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-size: 15px; scroll-behavior: smooth; }
+
+  body {
+    @apply bg-hap-bg antialiased;
+    color: rgb(var(--ink));
+  }
+
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-hap-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-hap-borderl rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gold-dark; }
+  ::selection { @apply bg-gold/20 text-gold-light; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   COMPONENT LAYER
+───────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Form controls */
+  .input {
+    @apply w-full bg-hap-surface2 border border-hap-border rounded-xl px-4 py-[11px]
+           text-sm outline-none transition-all duration-150
+           focus:border-gold focus:bg-hap-surface3 focus:ring-2 focus:ring-gold/10;
+    color: rgb(var(--ink));
+  }
+  .input::placeholder { color: rgba(var(--ink), 0.35); }
+  .input.err { @apply border-red-500; }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-[450]
+           cursor-pointer transition-all duration-150 no-underline select-none;
+    color: rgba(var(--ink), 0.50);
+  }
+  .nav-item:hover { @apply bg-hap-surface2; color: rgb(var(--ink)); }
+  .nav-item.active { @apply bg-gold/10 text-gold font-medium; }
+
+  /* Card */
+  .card {
+    @apply bg-hap-surface border border-hap-border rounded-2xl p-6 transition-all duration-150;
+  }
+  .card:hover { @apply border-hap-borderl; }
+
+  /* Stat card */
+  .stat-card {
+    @apply bg-hap-surface border border-hap-border rounded-2xl p-5
+           hover:border-hap-borderl hover:-translate-y-0.5 transition-all duration-150;
+  }
+
+  /* Upload zone */
+  .upload-zone {
+    @apply border-2 border-dashed border-hap-border rounded-2xl p-8 text-center cursor-pointer
+           transition-all duration-150 bg-hap-surface2 hover:border-gold hover:bg-gold/5;
+  }
+  .upload-zone.drag { @apply border-gold bg-gold/5; }
+
+  /* Tab */
+  .tab-item {
+    @apply px-5 py-3 text-sm font-medium cursor-pointer border-b-2
+           border-transparent -mb-px transition-all duration-150 select-none;
+    color: rgba(var(--ink), 0.40);
+  }
+  .tab-item:hover { color: rgba(var(--ink), 0.70); }
+  .tab-item.active { @apply text-gold border-gold; }
+
+  /* Table */
+  .tbl th {
+    @apply bg-hap-surface2 px-4 py-3 text-left text-[0.7rem] font-bold uppercase
+           tracking-widest border-b border-hap-border;
+    color: rgba(var(--ink), 0.35);
+  }
+  .tbl td {
+    @apply px-4 py-3.5 text-sm border-b border-hap-border align-middle;
+    color: rgba(var(--ink), 0.65);
+  }
+  .tbl tr:last-child td { @apply border-b-0; }
+  .tbl tbody tr { @apply transition-colors duration-100; }
+  .tbl tbody tr:hover { @apply bg-hap-surface2; }
+
+  /* Plan card */
+  .plan-card {
+    @apply bg-hap-surface border border-hap-border rounded-3xl p-8
+           hover:border-hap-borderl hover:-translate-y-1 hover:shadow-xl transition-all duration-300;
+  }
+  .plan-card.popular { @apply border-gold; }
+
+  /* Info row */
+  .info-row {
+    @apply flex items-start gap-3 py-3 border-b border-hap-border last:border-b-0;
+  }
+}
+
+/* Smooth page fade */
+.page-enter { animation: fadeIn .2s ease; }
+
+/* ─────────────────────────────────────────────────────────────────
+   SCROLL REVEAL — add [data-reveal] to any element;
+   JS IntersectionObserver adds .revealed when in view.
+───────────────────────────────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+[data-reveal="right"] { transform: translateX(-50px); }
+[data-reveal="left"]  { transform: translateX(50px);  }
+[data-reveal="scale"] { transform: scale(0.85); }
+[data-reveal].revealed { opacity: 1; transform: none; }
+
+/* Stagger delay helpers */
+.delay-100  { transition-delay: .10s !important; animation-delay: .10s !important; }
+.delay-200  { transition-delay: .20s !important; animation-delay: .20s !important; }
+.delay-300  { transition-delay: .30s !important; animation-delay: .30s !important; }
+.delay-400  { transition-delay: .40s !important; animation-delay: .40s !important; }
+.delay-500  { transition-delay: .50s !important; animation-delay: .50s !important; }
+.delay-600  { transition-delay: .60s !important; animation-delay: .60s !important; }
+.delay-700  { transition-delay: .70s !important; animation-delay: .70s !important; }
+.delay-800  { transition-delay: .80s !important; animation-delay: .80s !important; }
+
+/* ─────────────────────────────────────────────────────────────────
+   SHIMMER CARD — gold shine sweeps across card on hover
+───────────────────────────────────────────────────────────────── */
+.shimmer-card { position: relative; overflow: hidden; }
+.shimmer-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(201,168,76,0.12) 50%, transparent 60%);
+  background-size: 300% 100%;
+  background-position: -400px 0;
+  pointer-events: none;
+  transition: none;
+}
+.shimmer-card:hover::after {
+  animation: shimmer .7s ease forwards;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   GLOW BORDER — animated gold border trace
+───────────────────────────────────────────────────────────────── */
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .3s;
+  animation: borderBeam 2.5s linear infinite;
+}
+.glow-border:hover::before { opacity: 1; }
+
+/* ─────────────────────────────────────────────────────────────────
+   ANIMATED GRADIENT TEXT
+───────────────────────────────────────────────────────────────── */
+.text-gold-animate {
+  background: linear-gradient(90deg, #a07830, #c9a84c, #e8d08a, #c9a84c, #a07830);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TILT CARD — CSS 3D perspective tilt on hover
+───────────────────────────────────────────────────────────────── */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform .3s ease;
+}
+.tilt-card:hover { transform: perspective(800px) rotateX(4deg) rotateY(-4deg) translateZ(8px); }
+
+/* ─────────────────────────────────────────────────────────────────
+   RIPPLE BUTTON
+───────────────────────────────────────────────────────────────── */
+.ripple-btn { position: relative; overflow: hidden; }
+.ripple-btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleEffect .6s linear;
+  background-color: rgba(255,255,255,0.25);
+  pointer-events: none;
+}
+@keyframes rippleEffect {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   FLOATING PARTICLES  (gold dots in hero)
+───────────────────────────────────────────────────────────────── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.9), transparent);
+  pointer-events: none;
+  animation: particleRise linear infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   NAV LINK UNDERLINE SLIDE
+───────────────────────────────────────────────────────────────── */
+.nav-link-animated {
+  position: relative;
+}
+.nav-link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  right: 50%;
+  height: 2px;
+  background: #c9a84c;
+  border-radius: 1px;
+  transition: left .25s ease, right .25s ease;
+}
+.nav-link-animated:hover::after,
+.nav-link-animated.active::after {
+  left: 0; right: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   CARD ENTRANCE — cards pop in with a spring
+───────────────────────────────────────────────────────────────── */
+.card-enter {
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+  transition: opacity .5s ease, transform .5s cubic-bezier(0.34,1.2,0.64,1);
+}
+.card-enter.entered { opacity: 1; transform: none; }
+
+/* Number stat pulse on reveal */
+.stat-number {
+  display: inline-block;
+  animation: textPop .5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
